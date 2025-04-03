@@ -34,8 +34,15 @@ def combine_countries(df, countries, scaler):
     combined = pd.concat(all_data)
     return combined.reset_index()
 
-def encode_country(df):
-    return pd.get_dummies(df, columns=['country']) # one hot encode countries to make it a quantitative feature for model
+def encode_country(df, all_countries=None):
+    dummies = pd.get_dummies(df['country'], prefix='country')
+    if all_countries:
+        for c in all_countries:
+            col = f'country_{c}'
+            if col not in dummies:
+                dummies[col] = 0
+    df = pd.concat([df.drop(columns=['country']), dummies], axis=1)
+    return df  # encode all countries (for streamlit to work)
 
 def create_sliding_windows(df, window_size, target_col='new_cases'):
     X, y = [], []
@@ -55,7 +62,7 @@ def create_sliding_windows(df, window_size, target_col='new_cases'):
 
 #### LTSM Model Builder
 
-def build_ltsm_model(input_shape):
+def build_lstm_model(input_shape):
     model = Sequential([
         LSTM(128, return_sequences=True, input_shape=input_shape),
         Dropout(0.3),
