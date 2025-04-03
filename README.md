@@ -6,3 +6,5 @@ https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_c
 conda env create -f environment.yml
 
 conda activate covid-predict
+
+https://raghavdewangan-covid-outbreak-prediction-streamlit-app-rta1tv.streamlit.app/
