@@ -21,9 +21,18 @@ selected_country = st.selectbox("Select a country to forecast:", countries)
 # loading data
 st.write("\n## Loading and preprocessing data...")
 data = mcp.load_owid_data()
+
+st.subheader("Raw Data Preview") # check data validity
+st.dataframe(data.head())
+st.write("Available columns:", list(data.columns))
+
 preprocessor = mcp.MultiCountryCOVIDPreprocessor(countries=countries, window_size=14) # pre processing data then fitting it
 preprocessor.fit(data)
 X, y = preprocessor.transform(data)
+
+if X is None or y is None or len(X) == 0:
+    st.error("❌ Unable to process data. Check for missing or updated columns in the OWID dataset.")
+    st.stop() # stop and check
 
 # building and training model
 model = mcp.build_lstm_model(input_shape=(X.shape[1], X.shape[2]))

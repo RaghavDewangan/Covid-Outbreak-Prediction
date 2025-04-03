@@ -20,9 +20,14 @@ def prepare_country_data(df, country, scaler): # transformation pipeline (Scale 
     
     df_c = df_c[df_c['new_cases'] > 0] # pull significant values for model to be trained upon
 
+    if df_c.empty or df_c.isnull().all().all():
+        return None
+
     scaled = scaler.transform(df_c) # scale the df with specified scaler
     df_scaled = pd.DataFrame(scaled, columns=features, index=df_c.index)
     df_scaled['country'] = country
+
+    
 
     return df_scaled
 
