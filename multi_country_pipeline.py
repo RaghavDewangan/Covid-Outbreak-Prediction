@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dropout, Dense
 
 def load_owid_data(): # load the OWID dataset
     url = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
@@ -51,8 +53,22 @@ def create_sliding_windows(df, window_size, target_col='new_cases'):
 
     return np.array(X), np.array(y)
 
- 
-class MultiCountryCOVIDPreprocessor(BaseEstimator, TransformerMixin): # scikit learn compatible custome transformer, can be plugged into sklearn pipelines
+#### LTSM Model Builder
+
+def build_ltsm_model(input_shape):
+    model = Sequential([
+        LSTM(128, return_sequences=True, input_shape=input_shape),
+        Dropout(0.3),
+        LSTM(64),
+        Dropout(0.3),
+        Dense(1)
+    ])
+
+    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+    return model
+
+#### scikit learn compatible custome transformer, can be plugged into sklearn pipelines
+class MultiCountryCOVIDPreprocessor(BaseEstimator, TransformerMixin): 
     def __init__(self, countries, window_size=14):
         self.countries = countries
         self.window_size = window_size
