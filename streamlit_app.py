@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import multi_country_pipeline as mcp
 from tensorflow.keras.models import load_model
 import tempfile
+import boto3
+from dotenv import load_dotenv
 import os
 
 # -------------------------------
@@ -12,6 +14,15 @@ import os
 st.set_page_config(page_title="COVID-19 Forecast", layout="centered")
 st.title("🦠 COVID-19 Forecast by Country")
 
+load_dotenv()
+
+session = boto3.Session(
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.getenv("AWS_REGION")
+)
+
+s3 = session.client('s3')
 # -------------------------------
 # Sidebar input
 # -------------------------------
