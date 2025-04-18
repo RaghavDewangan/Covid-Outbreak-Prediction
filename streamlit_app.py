@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import multi_country_pipeline as mcp
 from tensorflow.keras.models import load_model
@@ -31,7 +32,11 @@ selected_country = st.selectbox("Select a country to forecast:", countries)
 
 # loading data
 st.write("\n## Loading and preprocessing data...")
-data = mcp.load_owid_data()
+
+response = s3.get_object(Bucket='covid-pipeline-data', Key='processed/owid-covid-data-filtered_2025-04-18_21-19-36.csv')
+
+
+data = pd.read_csv(response['Body'])
 
 st.subheader("Raw Data Preview") # check data validity
 st.dataframe(data.head())
